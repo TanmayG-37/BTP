@@ -95,7 +95,7 @@ def input():
 	# 	f.save(filepath)
 		
 	# 	# return f.filename
-	return render_template('p1.html')
+	return render_template('base.html')
 
 
 @app.route('/data', methods=['GET', 'POST'])
@@ -224,8 +224,10 @@ def data():
 
 
 	full_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'tsne.png')
+	if len(ind)==0:
+		ind = 'Not Applicable'
 
-	return render_template('p2.html', outliers=output, user_image=full_filename, t1=type1, t2=type2, t3=type3, indices=ind)
+	return render_template('base2.html', outliers=output, user_image=full_filename, t1=type1, t2=type2, t3=type3, indices=ind)
 
 
 
