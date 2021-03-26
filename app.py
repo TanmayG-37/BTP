@@ -227,7 +227,7 @@ def data():
 	if len(ind)==0:
 		ind = 'Not Applicable'
 
-	return render_template('base2.html', outliers=output, t1=type1, t2=type2, t3=type3, indices=ind)
+	return render_template('base2.html', outliers=output, t1=type1, t2=type2, t3=type3)
 
 
 
