@@ -180,23 +180,23 @@ def data():
 		# 	output+=1
 
 	
-	# Section fopr making visual representations
-	import matplotlib.pyplot as plt
-	from sklearn.manifold import TSNE
-	temp_data = TSNE(n_components=2).fit_transform(data)
-	temp_data = pd.DataFrame(temp_data)
-	temp_data['labels'] = labels
-	data['RZScore_HBOS_IF_Outlier_s'] = labels
-	t0 = temp_data[temp_data['labels']==0]
-	t0.drop(columns=['labels'], inplace=True)
-	t1 = temp_data[temp_data['labels']==1]
-	t1.drop(columns=['labels'], inplace=True)
+# 	# Section fopr making visual representations
+# 	import matplotlib.pyplot as plt
+# 	from sklearn.manifold import TSNE
+# 	temp_data = TSNE(n_components=2).fit_transform(data)
+# 	temp_data = pd.DataFrame(temp_data)
+# 	temp_data['labels'] = labels
+# 	data['RZScore_HBOS_IF_Outlier_s'] = labels
+# 	t0 = temp_data[temp_data['labels']==0]
+# 	t0.drop(columns=['labels'], inplace=True)
+# 	t1 = temp_data[temp_data['labels']==1]
+# 	t1.drop(columns=['labels'], inplace=True)
 
 
-	plt.scatter(t0[0],t0[1], color='red', s=0.3)
-	plt.scatter(t1[0],t1[1], color='blue', s=0.75)
-	plt.savefig('static/graph_photo/tsne.jpg')
-	# Image.open('static/graph_photo/tsne.png').save('static/graph_photo/tsne.jpg','JPEG')
+# 	plt.scatter(t0[0],t0[1], color='red', s=0.3)
+# 	plt.scatter(t1[0],t1[1], color='blue', s=0.75)
+# 	plt.savefig('static/graph_photo/tsne.jpg')
+# 	# Image.open('static/graph_photo/tsne.png').save('static/graph_photo/tsne.jpg','JPEG')
 
 	types = []
 	type1 = 0; type2 = 0; type3 = 0
@@ -223,11 +223,11 @@ def data():
 
 
 
-	full_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'tsne.png')
+# 	full_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'tsne.png')
 	if len(ind)==0:
 		ind = 'Not Applicable'
 
-	return render_template('base2.html', outliers=output, user_image=full_filename, t1=type1, t2=type2, t3=type3, indices=ind)
+	return render_template('base2.html', outliers=output, t1=type1, t2=type2, t3=type3, indices=ind)
 
 
 
