@@ -209,7 +209,8 @@ def data():
 	# Section fopr making visual representations
 	import matplotlib.pyplot as plt
 	from sklearn.manifold import TSNE
-	temp_data = TSNE(n_components=2).fit_transform(data)
+	from sklearn.decomposition import PCA
+	temp_data = PCA(n_components=2).fit_transform(data)
 	temp_data = pd.DataFrame(temp_data)
 	temp_data['labels'] = labels
 	data['RZScore_HBOS_IF_Outlier_s'] = labels
