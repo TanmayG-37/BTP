@@ -150,7 +150,7 @@ def data():
 
 
 	if algo == 'RZScore':
-		obj=RZScore(50)
+		obj=RZScore(5)
 		obj.fit(data)
 		obj.score(data)
 		temp_scores = obj.scores
