@@ -124,8 +124,8 @@ def data():
 
 	# Reading the data
 	data = pd.read_csv('static/'+str(f.filename))
-	# data = data.astype('float')
-	# data = data.dropna(axis='columns')
+	data = data.astype('float')
+	data = data.dropna(axis='columns')
 
 
 
