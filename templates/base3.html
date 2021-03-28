@@ -66,7 +66,7 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a style='font-size: 2em;' class="nav-link" href="{{url_for('input')}}">About Us</a>
+            <a style='font-size: 2em;' class="nav-link" href="{{url_for('input')}}">Summary</a>
           </li>
           <li class="nav-item">
             <a style='font-size: 2em;' class="nav-link" href="{{url_for('take_input')}}">API</a>
@@ -85,11 +85,28 @@
     <div class="col-sm-5 text-left">
       <form class="" action="data" method="post" enctype="multipart/form-data">
       <label style='font-size: 3em'>Outlier Detection API</label>
-      <p style='font-size: 2em'>We make use of three algorithms that use extremely different techniques to find the outliers in the given dataset. An outlier is defined as Type 1 if it is detected by only of the algorithms. Similarly it is labelled as Type 2 when it is detected by 2 of the algorithms and Type 3 when all of the algorithms state that the data point is an outlier. Along with this the user gets the option to get a list of indices at which the Type 1, Type 2, and Type 3 outliers are found. Please ensure that all the coulmn consist of only numerical values. </p>
+      <p style='font-size: 2em'>Here we implemented three multivariate outlier detection algorithms, of which HBOS and Isolation Forest are the existing best practice methods. FIND is a novel algorithm that scales large datasets. </p>
+      <br>
+      <label style='font-size: 3em'>HBOS</label>
+      <p style='font-size: 2em'>HBOS is a histogram-based outlier detection method that does not require prior training (Goldstein et al., 2012) </p>
+      <br>
+      <label style='font-size: 3em'>Isolation Forest</label>
+      <p style='font-size: 2em'> Isolation forest works on the principle of the decision tree algorithm. It isolates the outliers by randomly selecting a feature from the given set of features and then randomly selecting a split value between the maximum and minimum values of the selected feature. This random partitioning of features will produce smaller paths in trees for the anomalous data values and distinguish them from the normal set of the data (Liu et al., 2008). </p>
+      <br>
+      <label style='font-size: 3em'>FIND</label>
+      <p style='font-size: 2em'> Unlike HBOS and Isolation Forest, FIND uses hash families for binary encoding of high-dimensional data points. FIND is faster than HBOS and Isolation Forest and GPU friendly. </p>
+      <br>
+      <hr>
+      <a href="https://drive.google.com/drive/folders/1iGgybGDbzjDcjMi01yaOf3jux-VGrbyc?usp=sharing" style='font-size: 2em'>Link for sample DataSets</a>
+
+      <hr>
+
+
+
       <input style='font-size: 2em' type="file" name="csvfile" value="">
       <label style='font-size: 2em' for="algo">Choose an Algorithm:</label>
         <select id="algo" name="algo">
-          <option style='font-size: 2em' value="RZ Score">RZ Score</option>
+          <option style='font-size: 2em' value="RZ Score">FIND</option>
           <option style='font-size: 2em' value="HBOS">HBOS</option>
           <option style='font-size: 2em' value="Isolation Forest">Isolation Forest</option>
         </select> 
