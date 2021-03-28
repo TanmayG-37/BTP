@@ -105,10 +105,11 @@ def take_input():
 
 
 
-
+rno = ''
 @app.route('/data', methods=['GET', 'POST'])
 def data():
 	global f
+	global rno
 	import time
 	start_time = time.time()
 
@@ -123,8 +124,8 @@ def data():
 
 	# Reading the data
 	data = pd.read_csv('static/'+str(f.filename))
-	data = data.astype('float')
-	data = data.dropna(axis='columns')
+	# data = data.astype('float')
+	# data = data.dropna(axis='columns')
 
 
 
@@ -163,17 +164,18 @@ def data():
 		q3 = np.quantile(new,.75)
 		iqr = q3-q1
 		out = []
+		t1 = q3+(1.5)*iqr; t2 = q1-(1.5)*iqr
 		for i in range(len(new)):
-			if new[i]>(q3+(1.5)*iqr) or new[i]<(q1-(1.5)*iqr):
-				out1.append(1)
+			if new[i]>t1 or new[i]<t2:
+				out.append(1)
 			else:
-				out1.append(0)
+				out.append(0)
 
 
-		extreme = []
-		for i in range(len(new)):
-			if new[i]>(q3+(3)*iqr) or new[i]<(q1-(3)*iqr):
-				extreme.append(i)
+		# extreme = []
+		# for i in range(len(new)):
+		# 	if new[i]>(q3+(3)*iqr) or new[i]<(q1-(3)*iqr):
+		# 		extreme.append(i)
 		# else:
 		# 	extreme.append(0)
 		
@@ -200,33 +202,33 @@ def data():
 
 	# We declare a point as an outlier if it occurs in 2 or more methods
 	output = 0
-	labels = out
+	# labels = out
 	for i in range(len(out)):
 		if out[i]==1:
 			output+=1
 
 	
 	# Section fopr making visual representations
-	import matplotlib.pyplot as plt
-	from sklearn.manifold import TSNE
-	from sklearn.decomposition import PCA
-	temp_data = PCA(n_components=2).fit_transform(data)
-	temp_data = pd.DataFrame(temp_data)
-	temp_data['labels'] = labels
-	data['RZScore_HBOS_IF_Outlier_s'] = labels
-	t0 = temp_data[temp_data['labels']==0]
-	t0.drop(columns=['labels'], inplace=True)
-	t1 = temp_data[temp_data['labels']==1]
-	t1.drop(columns=['labels'], inplace=True)
+	# import matplotlib.pyplot as plt
+	# from sklearn.manifold import TSNE
+	# from sklearn.decomposition import PCA
+	# temp_data = PCA(n_components=2).fit_transform(data)
+	# temp_data = pd.DataFrame(temp_data)
+	# temp_data['labels'] = labels
+	# data['RZScore_HBOS_IF_Outlier_s'] = labels
+	# t0 = temp_data[temp_data['labels']==0]
+	# t0.drop(columns=['labels'], inplace=True)
+	# t1 = temp_data[temp_data['labels']==1]
+	# t1.drop(columns=['labels'], inplace=True)
 
 
-	plt.scatter(t0[0],t0[1], color='red', s=0.3)
-	plt.scatter(t1[0],t1[1], color='blue', s=0.75)
-	plt.xlabel('F1')
-	plt.ylabel('F2')
-	rno = str(random.randint(0, 1000000))
-	plt.savefig('static/graph_photo/tsne'+rno+'.jpg')
-	full_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'tsne'+rno+'.jpg')
+	# plt.scatter(t0[0],t0[1], color='red', s=0.3)
+	# plt.scatter(t1[0],t1[1], color='blue', s=0.75)
+	# plt.xlabel('F1')
+	# plt.ylabel('F2')
+	# rno = str(random.randint(0, 1000000))
+	# plt.savefig('static/graph_photo/tsne'+rno+'.jpg')
+	# full_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'tsne'+rno+'.jpg')
 	# Image.open('static/graph_photo/tsne.png').save('static/graph_photo/tsne.jpg','JPEG')
 
 
@@ -235,13 +237,28 @@ def data():
 
 
 
+	# saving outliers indices
+	temp_dict = {'Outlier':out}
+	df = pd.DataFrame(temp_dict)
+	rno = str(random.randint(0, 1000000))
+	df.to_csv('static/outlier'+rno+'.csv')
+
+
+
 	# score analysis
 	temp_scores = temp_scores + min(temp_scores)
 	temp_scores = temp_scores / max(temp_scores)
-	std = np.std(temp_scores)
-	mean = np.mean(temp_scores)
+	std = round(np.std(temp_scores),3)
+	mean = round(np.mean(temp_scores),3)
 
-	return render_template('base2.html', outliers=output, user_image=full_filename, number=number, features=features, impurity=impurity, std=std, mean=mean)
+	return render_template('base2.html', outliers=output, number=number, features=features, impurity=impurity, std=std, mean=mean)
+
+
+
+@app.route('/download', methods=['GET', 'POST'])
+def download():
+	global rno
+	return send_file('static/outlier'+rno+'.csv')
 
 
 
