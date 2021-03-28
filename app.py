@@ -98,6 +98,14 @@ def input():
 	return render_template('base.html')
 
 
+
+@app.route('/input', methods=['GET', 'POST'])
+def take_input():
+	return render_template('base3.html')
+
+
+
+
 @app.route('/data', methods=['GET', 'POST'])
 def data():
 	global f
@@ -106,6 +114,7 @@ def data():
 
 	if request.method == 'POST':
 		f = request.files['csvfile']
+		algo = request.form['algo']
 		if not os.path.isdir('static'):
 			os.mkdir('static')
 		filepath = os.path.join('static', f.filename)
@@ -118,31 +127,54 @@ def data():
 	data = data.dropna(axis='columns')
 
 
+
+
+	# Data Analytics
+	number = len(data)
+	features = len(data.iloc[0])
+
+
+
+
+
+
+
+
+
+
+
+	out = []
 	# 1st method - Random Z score 
-	obj=RZScore(50)
-	obj.fit(data)
-	obj.score(data)
-	temp_scores = obj.scores
-	new = np.array([0.0 for i in range(len(obj.scores[0]))])
-	for i in range(len(temp_scores)):
-		new+=temp_scores[i]
 
-	
-	q1 = np.quantile(new,.25)
-	q3 = np.quantile(new,.75)
-	iqr = q3-q1
-	out1 = []
-	for i in range(len(new)):
-		if new[i]>(q3+(1.5)*iqr) or new[i]<(q1-(1.5)*iqr):
-			out1.append(1)
-		else:
-			out1.append(0)
+	print(algo)
 
 
-	extreme = []
-	for i in range(len(new)):
-		if new[i]>(q3+(3)*iqr) or new[i]<(q1-(3)*iqr):
-			extreme.append(i)
+	if algo == 'RZScore':
+		obj=RZScore(50)
+		obj.fit(data)
+		obj.score(data)
+		temp_scores = obj.scores
+		new = np.array([0.0 for i in range(len(obj.scores[0]))])
+		for i in range(len(temp_scores)):
+			new+=temp_scores[i]
+
+		
+		q1 = np.quantile(new,.25)
+		q3 = np.quantile(new,.75)
+		iqr = q3-q1
+		out = []
+		t1 = q3+(1.5)*iqr; t2 = q1-(1.5)*iqr
+		for i in range(len(new)):
+			if new[i]>t1 or new[i]<t2:
+				out1.append(1)
+			else:
+				out1.append(0)
+
+
+		# extreme = []
+		# for i in range(len(new)):
+		# 	if new[i]>(q3+(3)*iqr) or new[i]<(q1-(3)*iqr):
+		# 		extreme.append(i)
 		# else:
 		# 	extreme.append(0)
 		
@@ -151,83 +183,73 @@ def data():
 
 
 	# 2nd method - isolation forest
-	obj = IF(50)
-	obj.partition(data)
-	out2 = obj.labels
+	elif algo == 'Isolation Forest':
+		obj = IF(50)
+		obj.partition(data)
+		temp_scores = obj.score_samples(data)
+		out = obj.labels
 
 
 	# 3rd method HBOS
-	from pyod.models import hbos
-	model = hbos.HBOS()
-	model.fit(data)
-	out3 = model.predict(data)
+	else:
+		from pyod.models import hbos
+		model = hbos.HBOS()
+		model.fit(data)
+		out = model.predict(data)
+		temp_scores = model.decision_function(data)
 
 
 	# We declare a point as an outlier if it occurs in 2 or more methods
 	output = 0
-	labels = []
-	# types = []
-	for i in range(len(out1)):
-		if out1[i]==1 and (out1[i]==out2[i] or out2[i]==out3[i]):
+	labels = out
+	for i in range(len(out)):
+		if out[i]==1:
 			output+=1
-			labels.append(1)
-		elif out2[i]==1 and out2[i]==out3[i]:
-			output+=1
-			labels.append(1)
-		else:
-			labels.append(0)
-		# if out1[i]==1 and out1[i]==out3[i]:
-		# 	output+=1
 
 	
-# 	# Section fopr making visual representations
-# 	import matplotlib.pyplot as plt
-# 	from sklearn.manifold import TSNE
-# 	temp_data = TSNE(n_components=2).fit_transform(data)
-# 	temp_data = pd.DataFrame(temp_data)
-# 	temp_data['labels'] = labels
-# 	data['RZScore_HBOS_IF_Outlier_s'] = labels
-# 	t0 = temp_data[temp_data['labels']==0]
-# 	t0.drop(columns=['labels'], inplace=True)
-# 	t1 = temp_data[temp_data['labels']==1]
-# 	t1.drop(columns=['labels'], inplace=True)
+	# Section fopr making visual representations
+	# import matplotlib.pyplot as plt
+	# from sklearn.manifold import TSNE
+	# from sklearn.decomposition import PCA
+	# temp_data = PCA(n_components=2).fit_transform(data)
+	# temp_data = pd.DataFrame(temp_data)
+	# temp_data['labels'] = labels
+	# data['RZScore_HBOS_IF_Outlier_s'] = labels
+	# t0 = temp_data[temp_data['labels']==0]
+	# t0.drop(columns=['labels'], inplace=True)
+	# t1 = temp_data[temp_data['labels']==1]
+	# t1.drop(columns=['labels'], inplace=True)
 
 
-# 	plt.scatter(t0[0],t0[1], color='red', s=0.3)
-# 	plt.scatter(t1[0],t1[1], color='blue', s=0.75)
-# 	plt.savefig('static/graph_photo/tsne.jpg')
-# 	# Image.open('static/graph_photo/tsne.png').save('static/graph_photo/tsne.jpg','JPEG')
+	# plt.scatter(t0[0],t0[1], color='red', s=0.3)
+	# plt.scatter(t1[0],t1[1], color='blue', s=0.75)
+	# plt.xlabel('F1')
+	# plt.ylabel('F2')
+	# rno = str(random.randint(0, 1000000))
+	# plt.savefig('static/graph_photo/tsne'+rno+'.jpg')
+	# full_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'tsne'+rno+'.jpg')
+	# Image.open('static/graph_photo/tsne.png').save('static/graph_photo/tsne.jpg','JPEG')
 
-	types = []
-	type1 = 0; type2 = 0; type3 = 0
-	ind = []
-	for i in range(len(out1)):
-		if out1[i]==1 and out2[i]==1 and out3[i]==1:
-			types.append(3)
-			type3+=1
-			ind.append(i)
-		elif out1[i]==1 and (out1[i]==out2[i] or out2[i]==out3[i]):
-			# output+=1
-			types.append(2)
-			type2+=1
-		elif out2[i]==1 and out2[i]==out3[i]:
-			# output+=1
-			types.append(2)
-			type2+=1
-		elif out1[i]==1 or out2[i]==1 or out3[i]==1:
-			types.append(1)
-			type1+=1 
-		else:
-			labels.append(0)
+
+	# impurity
+	impurity = (output*100)/number
 
 
 
+	# score analysis
+	temp_scores = temp_scores + min(temp_scores)
+	temp_scores = temp_scores / max(temp_scores)
+	std = round(np.std(temp_scores),3)
+	mean = round(np.mean(temp_scores),3)
 
-# 	full_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'tsne.png')
-	if len(ind)==0:
-		ind = 'Not Applicable'
+	return render_template('base2.html', outliers=output, number=number, features=features, impurity=impurity, std=std, mean=mean)
 
-	return render_template('base2.html', outliers=output, t1=type1, t2=type2, t3=type3)
+
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+	return render_template('base4.html')
+
 
 
 
