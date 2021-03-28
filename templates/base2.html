@@ -1,35 +1,4 @@
-Skip to content
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@TanmayG-37 
-TanmayG-37
-/
-BTP
-1
-00
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-Settings
-BTP/templates/base2.html
-@TanmayG-37
-TanmayG-37 Update base2.html
-Latest commit ae63123 9 minutes ago
- History
- 1 contributor
-84 lines (73 sloc)  3.84 KB
-  
-!DOCTYPE html>
+  !DOCTYPE html>
 <html lang="en">
 <head>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
@@ -97,7 +66,7 @@ Latest commit ae63123 9 minutes ago
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a style='font-size: 2em;' class="nav-link" href="{{url_for('input')}}">About Us</a>
+            <a style='font-size: 2em;' class="nav-link" href="{{url_for('input')}}">Summary</a>
           </li>
           <li class="nav-item">
             <a style='font-size: 2em;' class="nav-link" href="{{url_for('take_input')}}">API</a>
@@ -127,7 +96,7 @@ Latest commit ae63123 9 minutes ago
 
 <label style='font-size: 3em;'>Outlier count</label>
 <br>
-<label style='font-size: 2em;'>The percentage impurity in the dataset is {{impurity}}%</label>
+<label style='font-size: 2em;'>The percentage outliers in the dataset is {{impurity}}%</label>
 <br>
 <label style='font-size: 2em;'>The number of outliers in the dataset are {{outliers}}</label>
 <br>
@@ -136,6 +105,11 @@ Latest commit ae63123 9 minutes ago
 <label style='font-size: 2em;'>The mean value of the raw scores is {{mean}}</label>
 <br>
 <hr>
+<label style='font-size: 2em;'>Download CSV file containing binary data as to whether a datapoint is an outlier or not.</label>
+<br>
+<p>
+  <a style='font-size: 2em;' href="{{url_for('download')}}">Click to Download</a>
+</p>
 <!-- <label style='font-size: 3em; background-color:LightBlue;'>The Visualization of the Data is given as follows. Note: Blue dots indicate the outliers</label><br>
 <label style='font-size: 3em; background-color:LightBlue;'></label>
 <img src={{user_image}} alt="User Image" style='background-color:LightBlue;'>
@@ -144,13 +118,13 @@ Latest commit ae63123 9 minutes ago
 <!-- <label style='font-size: 3em; background-color:LightBlue;'>The indices of Type 3 outliers in the dataset are </label>
 <label>{{ind}}</label>
 <br> -->
-<label style='font-size: 3em;'>TSNE</label>
+<!-- <label style='font-size: 3em;'>TSNE</label>
 <br>
 <label style='font-size: 2em;'>The TSNE plot for the given data is given below. Please note that the outliers are depicted by the blue dots.</label> 
 <img src={{user_image}} alt="User Image">
 <br>
 <hr>
-
+ -->
 
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
