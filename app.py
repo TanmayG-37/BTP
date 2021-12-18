@@ -307,7 +307,7 @@ def data():
 
 
 	#4th method Robust
-	if algo=='Robust RZ'
+	elif algo=='Robust RZ':
 		obj=Robust(5,0.1)
 		obj.fit(data)
 		obj.score(data)
