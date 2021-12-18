@@ -74,29 +74,24 @@ class IF:
 
 
 
-from scipy.special import erfc
+# from scipy.special import erfc
 
 class Chauv:
-	def __init__(self,n_estimators,strictness):
-		self.L=n_estimators
-		self.strictness = strictness
+	def __init__(self,L):
+		self.L=L
 		self.mean=[]
 		self.std=[]
 		self.weights=[]
 		self.size=0
 		self.scores=[]
-		self.subset = []
 
 
-	def get_bins(self):
-		# defining the weights for each feature
+
+	def get_bins(self,data):
+		# defining the weights
 		for i in range(self.L):
 			self.weights.append(np.array([random.random() for j in range(self.size)])) 
 			
-
-	def clusters(self,data):
-		self.subset = random.sample(list(data.columns),int(self.size*self.strictness))
-		return
 
 
 	def fit(self,data):
@@ -116,7 +111,7 @@ class Chauv:
 		criterion = 1.0/(2*N)         # Chauvenet's criterion
 		d = abs(data-self.mean)/self.std         
 		d /= 2.0**0.5                
-		prob = erfc(d)               # Area normal dist.    
+		# prob = erfc(d)               # Area normal dist.    
 		print(prob)
 		filter = prob >= criterion 
 		# print(filter)  
@@ -127,26 +122,22 @@ class Chauv:
 
 
 class Robust:
-	def __init__(self,n_estimators,strictness):
-		self.L=n_estimators
-		self.strictness = strictness
-		self.med=[]
+	def __init__(self,L):
+		self.L=L
+		self.mean=[]
 		self.std=[]
 		self.weights=[]
 		self.size=0
 		self.scores=[]
-		self.subset = []
 
 
-	def get_bins(self):
-		# defining the weights for each feature
+
+	def get_bins(self,data):
+		# defining the weights
 		for i in range(self.L):
 			self.weights.append(np.array([random.random() for j in range(self.size)])) 
 			
 
-	def clusters(self,data):
-		self.subset = random.sample(list(data.columns),int(self.size*self.strictness))
-		return
 
 
 	def fit(self,data):
@@ -158,9 +149,10 @@ class Robust:
 		self.clusters(pd.DataFrame(data))
 		self.med = pd.DataFrame(data).median(axis=0)
 		med = np.median(data)
-		x   = abs(data-med)
-		MAD = np.median(x)
-		self.mad = MAD
+		# x   = abs(data-med)
+		# MAD = np.median(x)
+
+		self.mad = np.mad(data)
 		return None
 
 
@@ -308,7 +300,7 @@ def data():
 
 	#4th method Robust
 	elif algo=='Robust RZ':
-		obj=Robust(5,0.1)
+		obj=Robust(50)
 		obj.fit(data)
 		obj.score(data)
 		temp_scores = obj.scores
@@ -331,27 +323,25 @@ def data():
 
 	# 5th method
 	else:
-		obj=Chauv(5,0.1)
+		obj=Chauv(50)
 		obj.fit(data)
-		obj.chauvenet(data)
-		# print(obj.scores)
-		new = []
-		for i in obj.scores:
-			new.append(sum(i))
-		# new
-		new = new
-		# for i in range(len(new)):
-		#     print(new[i])
+		obj.score(data)
+		temp_scores = obj.scores
+		new = np.array([0.0 for i in range(len(obj.scores[0]))])
+		for i in range(len(temp_scores)):
+			new+=temp_scores[i]
+
+		
 		q1 = np.quantile(new,.25)
 		q3 = np.quantile(new,.75)
 		iqr = q3-q1
 		out = []
+		t1 = q3+(1.5)*iqr; t2 = q1-(1.5)*iqr
 		for i in range(len(new)):
-			if new[i]>(q3+(1.5)*iqr) or new[i]<(q1-(1.5)*iqr):
+			if new[i]>t1 or new[i]<t2:
 				out.append(1)
 			else:
 				out.append(0)
-
 
 
 
