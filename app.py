@@ -120,7 +120,7 @@ class Chauv:
 		print(prob)
 		filter = prob >= criterion 
 		# print(filter)  
-		self.scores = filter
+		self.scores = prob
 		return filter                
 
 
