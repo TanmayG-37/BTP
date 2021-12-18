@@ -251,7 +251,7 @@ def data():
 	std = round(np.std(temp_scores),3)
 	mean = round(np.mean(temp_scores),3)
 
-	return render_template('base2.html', outliers=output, number=number, features=features, impurity=impurity, std=std, mean=mean)
+	return render_template('base2.html', outliers=output, number=number, features=features, impurity=impurity, std=std, mean=mean, algo=algo)
 
 
 
