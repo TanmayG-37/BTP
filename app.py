@@ -77,51 +77,51 @@ class IF:
 from scipy.special import erfc
 
 class Chauv:
-    def __init__(self,n_estimators,strictness):
-        self.L=n_estimators
-        self.strictness = strictness
-        self.mean=[]
-        self.std=[]
-        self.weights=[]
-        self.size=0
-        self.scores=[]
-        self.subset = []
+	def __init__(self,n_estimators,strictness):
+		self.L=n_estimators
+		self.strictness = strictness
+		self.mean=[]
+		self.std=[]
+		self.weights=[]
+		self.size=0
+		self.scores=[]
+		self.subset = []
 
 
-    def get_bins(self):
-        # defining the weights for each feature
-        for i in range(self.L):
-            self.weights.append(np.array([random.random() for j in range(self.size)])) 
-            
+	def get_bins(self):
+		# defining the weights for each feature
+		for i in range(self.L):
+			self.weights.append(np.array([random.random() for j in range(self.size)])) 
+			
 
-    def clusters(self,data):
-        self.subset = random.sample(list(data.columns),int(self.size*self.strictness))
-        return
-
-
-    def fit(self,data):
-        self.size=len(data[0])
-        print(self.size)
-        # get_bins gives us the factors for each feature
-        self.get_bins()
-        # clusters functions hashes the datapoints into groups so that we can detect local outliers
-        self.clusters(pd.DataFrame(data))
-        self.mean=data.mean(axis=0)
-        self.std=data.std(axis=0)+(10**-5) # to avoid division by 0 error
-        return None
+	def clusters(self,data):
+		self.subset = random.sample(list(data.columns),int(self.size*self.strictness))
+		return
 
 
-    def chauvenet(self,data):
-        N = len(data)                
-        criterion = 1.0/(2*N)         # Chauvenet's criterion
-        d = abs(data-self.mean)/self.std         
-        d /= 2.0**0.5                
-        prob = erfc(d)               # Area normal dist.    
-        print(prob)
-        filter = prob >= criterion 
-        # print(filter)  
-        self.scores = filter
-        return filter                
+	def fit(self,data):
+		self.size=len(data[0])
+		print(self.size)
+		# get_bins gives us the factors for each feature
+		self.get_bins()
+		# clusters functions hashes the datapoints into groups so that we can detect local outliers
+		self.clusters(pd.DataFrame(data))
+		self.mean=data.mean(axis=0)
+		self.std=data.std(axis=0)+(10**-5) # to avoid division by 0 error
+		return None
+
+
+	def chauvenet(self,data):
+		N = len(data)                
+		criterion = 1.0/(2*N)         # Chauvenet's criterion
+		d = abs(data-self.mean)/self.std         
+		d /= 2.0**0.5                
+		prob = erfc(d)               # Area normal dist.    
+		print(prob)
+		filter = prob >= criterion 
+		# print(filter)  
+		self.scores = filter
+		return filter                
 
 
 
@@ -337,7 +337,7 @@ def data():
 		# print(obj.scores)
 		new = []
 		for i in obj.scores:
-		    new.append(sum(i))
+			new.append(sum(i))
 		# new
 		new = new
 		# for i in range(len(new)):
@@ -347,10 +347,10 @@ def data():
 		iqr = q3-q1
 		out11 = []
 		for i in range(len(new)):
-		    if new[i]>(q3+(1.5)*iqr) or new[i]<(q1-(1.5)*iqr):
-		        out11.append(1)
-		    else:
-		        out11.append(0)
+			if new[i]>(q3+(1.5)*iqr) or new[i]<(q1-(1.5)*iqr):
+				out11.append(1)
+			else:
+				out11.append(0)
 
 
 
