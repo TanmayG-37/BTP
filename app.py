@@ -345,12 +345,12 @@ def data():
 		q1 = np.quantile(new,.25)
 		q3 = np.quantile(new,.75)
 		iqr = q3-q1
-		out11 = []
+		out = []
 		for i in range(len(new)):
 			if new[i]>(q3+(1.5)*iqr) or new[i]<(q1-(1.5)*iqr):
-				out11.append(1)
+				out.append(1)
 			else:
-				out11.append(0)
+				out.append(0)
 
 
 
